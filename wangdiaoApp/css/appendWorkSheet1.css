@@ -1,0 +1,63 @@
+body{
+    background-color: #fff;
+}
+.workSheet_Choose_div{
+    /*position: relative;*//*relative 設置相對定位,   absolute绝对定位*/
+    height: 2.3rem;
+    width: 100%;
+}
+.workSheet_Choose_div_sp{
+    /*position: relative;*//*設置相對定位*/
+    height: 1.9rem;
+    width: 100%;
+}
+.workSheet_Choose_div_Line{
+    height: 1.7rem;
+    width: 96%;
+}
+/**//**/
+textarea{
+    /*border:0.1rem;*/
+    resize:none;
+    width: 96%;
+    height: 14.5625rem;
+    border: 1px solid #e7e7e7;
+    /*margin: 0.1rem auto;*/
+    margin-left: 0.1rem;
+    margin-right: 0.1rem;
+    margin-top: 0.6rem;
+    padding: 0.3125rem;
+}
+textarea::-webkit-input-placeholder{
+
+    height: 14.5625rem;
+    line-height: 14.5625rem;
+} /* 使用webkit内核的浏览器 */
+.contactusform>textarea::-moz-placeholder{
+    height: 14.5625rem;
+    line-height: 14.5625rem;
+} /* Firefox版本4-18 */
+.contactusform>textarea::-moz-placeholder{
+    height: 14.5625rem;
+    line-height: 14.5625rem;
+} /* Firefox版本19+ */
+.contactusform>textarea::-ms-input-placeholder{
+    height: 14.5625rem;
+    line-height: 14.5625rem;
+}
+
+ /* #workSheet_area{
+      position:absolute;
+      top:rem;
+  }*/
+
+.workSheet_ChooseSpanFont{
+    /*font-weight:bold;*/
+    color: #c7c7c7;
+}
+/*
+#workSheet_input {
+    height: 500px;
+    width: 500px;
+}*/
+

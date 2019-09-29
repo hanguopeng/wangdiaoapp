@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content=
+            "maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>工单处理</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/rams.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/worksheet_manage.css"/>
+    <style>
+        .sheet-lab{
+            background-color: #ffffff;
+            width:100%;
+            height:2.4rem;
+            border: 1px solid white;
+            border-top-color: #e7e7e7;
+            border-bottom-color: #e7e7e7;
+            letter-spacing: 1px
+        }
+        .sheet-lab-middle{
+            background-color: #ffffff;
+            width:100%;
+            height:2.4rem;
+            border: 1px solid white;
+            border-top-color: #e7e7e7;
+            letter-spacing: 1px
+        }
+        .span-text{
+            display:inline-block;
+            font-weight: 500;
+        }
+        .login-out{
+            width:80%;
+            background-color: #e10010;
+            height:2.4rem;
+            margin-left:10%;
+            border-radius: 6px;
+            padding-top: 0.8rem;
+            letter-spacing: 1px
+        }
+
+        .aui-iconfont{
+            color:#e5e5e5;
+            font-style: oblique;
+            font-size:0.8rem;
+            font-weight:900;
+        }
+    </style>
+</head>
+<body style="background-color: #f5f5f5 !important;position: relative;">
+<header id="header" class="aui-bar aui-bar-nav" style="background-color: #f5f5f5; color: #292929;position: fixed">
+    <div class="aui-title" style="font-weight: 600">我的信息</div>
+    <!--<div class="aui-pull-right" style="margin-top:1rem;width: 13%;height:13%">-->
+    <!--<img src="../image/three_points.png">-->
+    <!--</div>-->
+</header>
+<div id="allProcessTitle" style="margin-top: 2.6rem;height: 100%;position:relative" class="aui-margin-b-15">
+    <div style="position:absolute;margin-left:43%;margin-top:0.5rem;">
+        <img src="../image/person.png" style="width:2.2rem;height:2.2rem;display: inline-block;">
+        <p style="color:white;position: absolute;font-weight: 700;letter-spacing: 1px;margin-left:2%" class=" aui-font-size-12" id="userName"></p>
+        <p style="color:white;position: absolute;margin-top: 1.0rem;font-weight: 700;letter-spacing: 1px;margin-left:-7%" class="aui-font-size-12" id="userPhone"></p>
+        <div style="position: relative;margin-left:4rem;margin-top:-3rem;color: #ffffff;letter-spacing: 1px;" class="aui-font-size-12">净月-传输网维护网络</div>
+    </div>
+    <img src="../image/wode_orange_img.png">
+</div>
+<div style="margin-left: -0.2rem;position:relative">
+    <div class="aui-font-size-14 sheet-lab aui-margin-t-5">
+        <span class="aui-margin-l-15 aui-margin-t-15 span-text">基础信息</span>
+        <i class="aui-iconfont aui-icon-right" style="position:absolute;right:1rem;top:0.75rem;"></i>
+    </div>
+
+    <div class="aui-font-size-14 sheet-lab-middle aui-margin-t-15">
+        <span class="aui-margin-15 aui-margin-t-15 span-text">我的组织</span>
+        <i class="aui-iconfont aui-icon-right" style="position: absolute;right:1rem;top:3.75rem;"></i>
+    </div>
+    <div class="aui-font-size-14 sheet-lab-middle">
+        <span class="aui-margin-15 aui-margin-t-15 span-text ">密码修改</span>
+        <i class="aui-iconfont aui-icon-right" style="position:absolute;right:1rem;top:6.25rem;"></i>
+    </div>
+    <div class="aui-font-size-14 sheet-lab-middle" onclick="appUpdataCheck()">
+        <span class="aui-margin-15 aui-margin-t-15 span-text">检查更新</span>
+        <i class="aui-iconfont aui-icon-right" style="position:absolute;right:1rem;top:8.5rem;"></i>
+    </div>
+
+    <div class="aui-font-size-14 sheet-lab aui-margin-t-15">
+        <span class="aui-margin-15 aui-margin-t-15 span-text">清除缓存</span>
+        <i class="aui-iconfont aui-icon-right" style="position:absolute;right:1rem;top:11.75rem;"></i>
+    </div>
+
+        <div class="aui-btn aui-font-size-14 login-out aui-margin-t-15 aui-text-center" onclick="outOfLogin()"><div style="margin-top:-0.3rem">退出登录</div></div>
+        <!--<p class="aui-text-center" style="color:white;letter-spacing: 2px;">退出登录</p>-->
+    <div style="position: absolute;right:47%;margin-top:8%" id="versonInfoContainer">
+
+    </div>
+
+</div>
+<footer class="aui-bar aui-bar-tab" id="footer" style="background-color: #e7e7e7; color: #292929">
+    <div class="redLine"></div>
+    <div style="background-color: white">
+        <div class="aui-bar-tab-item" tapmode onclick="openAppointPage('worksheet_manage')">
+            <img class="aui-iconfont" style="margin-left: 1.7rem" src="../image/gongdanchuli_orange_icon.png">
+            <div class="aui-bar-tab-label" style="margin-top: 0.1rem;color: #ff6600">工单处理</div>
+        </div>
+        <div class="aui-bar-tab-item"  tapmode onclick="openAppointPage(null)">
+            <img class="aui-iconfont" style="margin-left: 1.7rem" src="../image/gailanshitu_icon.png" >
+            <div class="aui-bar-tab-label" style="margin-top: 0.1rem">概览视图</div>
+        </div>
+        <div class="aui-bar-tab-item"  tapmode onclick="openAppointPage(null)">
+            <img class="aui-iconfont" style="margin-left: 1.7rem" src="../image/peizhiguanli_icon.png">
+            <div class="aui-bar-tab-label" style="margin-top: 0.1rem">配置管理</div>
+        </div>
+        <div class="aui-bar-tab-item" tapmode onclick="openAppointPage('person_center')">
+            <img class="aui-iconfont" style="margin-left: 1.7rem" src="../image/wode_icon.png">
+            <div class="aui-bar-tab-label" style="margin-top: 0.1rem">我的</div>
+        </div>
+    </div>
+</footer>
+</body>
+<script id="versionInfo" type="text/template">
+<div style="color:#AAAFB8" class="aui-font-size-12">V&nbsp&nbsp{{=it.code}}</div>
+</script>
+<script id="personName" type="text/template">
+    <span class="aui-text-center">{{=it.username}}</span>
+</script>
+<script id="personPhone" type="text/template">
+    <span class="aui-text-center">{{=it.phone}}</span>
+</script>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/doT.min.js"></script>
+<script type="text/javascript" src="../script/config.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/aui-tab.js"></script>
+<script type="text/javascript" src="../script/aui-tab.js"></script>
+<script type="text/javascript">
+    var versionInfo = $api.getStorage(storageKey.versionInfo);
+    var personInfo = $api.getStorage(storageKey.loginUser);
+    var UIActionProgress;
+    var fs;
+    apiready = function(){
+        UIActionProgress = api.require('UIActionProgress');
+        fs = api.require('fs');
+        userAndversionInfo()
+    }
+
+    function userAndversionInfo(){
+
+        var contentTmpl = doT.template($api.text($api.byId('versionInfo')))
+        $api.html($api.byId('versonInfoContainer'), contentTmpl(versionInfo));
+
+        var userNameTmpl = doT.template($api.text($api.byId('personName')))
+        $api.html($api.byId('userName'), userNameTmpl(personInfo));
+
+        var userPhoneTmpl = doT.template($api.text($api.byId('personPhone')))
+        $api.html($api.byId('userPhone'), userPhoneTmpl(personInfo));
+    }
+
+    function outOfLogin(){
+        $api.rmStorage(storageKey.loginName);
+        $api.rmStorage(storageKey.loginPwd);
+
+        api.closeToWin({
+            name:'root'
+        });
+    }
+
+    function appUpdataCheck(){
+        common.post({
+            url:config.versionUpdateUrl+"&userName=" + personInfo.userId + "&j_username=" + personInfo.userId + "&j_password=" + personInfo.password,
+            isLoading:true,
+            success:function(ret){
+                alert(JSON.stringify(ret))
+                if(ret){
+                    if(ret.status=200){
+                        if(versionInfo.code < ret.data.code){
+                            api.hideProgress();
+                            api.confirm({
+                                title:'有新版本！是否更新？',
+                                msg:'',
+                                button:['确定','取消']
+                            },function(retUpdate,err){
+                                var index = retretUpdate.buttonIndex;
+                                if(index == 1){
+                                    if (api.systemType == "android"){
+                                        UIActionProgress.open({
+                                            maskBg: 'rgba(0,0,0,0.5)',
+                                            styles: {
+                                                h: 108,
+                                                bg: '#fff',
+                                                title: {
+                                                    size: 13,
+                                                    color: '#000',
+                                                    marginT: 10
+                                                },
+                                                msg: {
+                                                    size: 12,
+                                                    color: '#000',
+                                                    marginT: 5
+                                                },
+                                                lable: {
+                                                    size: 12,
+                                                    color: '#696969',
+                                                    marginB: 5
+                                                },
+                                                progressBar: {
+                                                    size: 2,
+                                                    normal: '#000',
+                                                    active: '#4876FF',
+                                                    marginB: 35,
+                                                    margin: 5
+                                                }
+                                            },
+                                            data: {
+                                                title: '正在更新',
+                                                msg: '',
+                                                value: 0
+                                            }
+                                        },function(ret){
+                                            if(ret && ret.eventType=='complete'){
+                                                UIActionProgress.close();
+                                            }
+                                        });
+                                        fs.removeSync({
+                                            path: 'fs://app.apk'
+                                        });
+
+                                        api.download({
+                                            url: ret.content.source,
+                                            savePath: 'fs://app.apk',
+                                            report: true,
+                                            cache: true,
+                                            allowResume: true
+                                        },function(retdownload, err2){
+                                            if (retdownload && 0 == retdownload.state) {/* 下载进度 */
+                                                UIActionProgress.setData({
+                                                    data:{
+                                                        title: '正在更新',
+                                                        msg: '',
+                                                        value: retdownload.percent
+                                                    }
+                                                });
+                                            }
+                                            if (retdownload && 1 == retdownload.state) {/* 下载完成 */
+                                                UIActionProgress.setData({
+                                                    data:{
+                                                        title: '正在更新',
+                                                        msg: '',
+                                                        value: 100
+                                                    }
+                                                });
+                                                api.installApp({
+                                                    appUri : retdownload.savePath
+                                                });
+                                            }
+                                            if(retdownload && 2 == retdownload.state){/* 下载失败 */
+                                                UIActionProgress.close();
+                                                api.alert({
+                                                    title: '错误',
+                                                    msg: '更新失败,请稍后重试',
+                                                }, function(ret3, err3){
+                                                    //判断是否需要强行关闭
+                                                    if(ret.content.closed){
+                                                        api.alert({
+                                                            title: '提示',
+                                                            msg: ret.content.closeTip||'必须更新版本之后才能使用!',
+                                                        }, function(ret, err){
+                                                            api.closeWidget({
+                                                                id: api.appId,
+                                                                retData: {
+                                                                    name: 'closeWidget'
+                                                                },
+                                                                silent: true
+                                                            });
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                }
+                            })
+                        }else{
+                            api.hideProgress();
+                            api.toast({
+                                msg: '已是最新版本',
+                                duration: 2000,
+                                location: 'middle'
+                            });
+                        }
+                    }else{
+                        api.hideProgress();
+                        api.toast({
+                            msg: ret.msg,
+                            duration: config.duration,
+                            location: 'bottom'
+                        });
+                    }
+                }else{
+                    api.hideProgress();
+                    api.alert({
+                        title: '错误',
+                        msg: '版本更新异常,请联系管理员'
+                    });
+                }
+
+            }
+        })
+    }
+</script>
+</html>
