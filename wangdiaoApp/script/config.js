@@ -1,4 +1,4 @@
-var localServer = "http://192.168.1.126:8080/rams_v3"
+var localServer = "http://192.168.1.125:8080/rams_v3"
 var config= {
     duration: 3000,   //提示信息3000毫秒之后消失
     // 测试通过，需要在url后面继续拼接数据的已经在说明后举例！
@@ -38,6 +38,7 @@ var storageKey={
     wsId:"wsId",   //工单Id
     wsNum:"wsNum",   //工单号
     processId:"processId" ,  // 流程id
+    versionInfo: 'versionInfo', //版本信息
 
     data_id : "data_id",    //选中节点id
     data_name : "data_name",//选中节点名称
@@ -50,4 +51,6 @@ var parentdictid={
     appendWorksheet: 10127,    //追派 字典值父id
     suspendAudit: 10126,    //挂起审核 字典值父id
     overWorksheet: 10103    //返单 字典值父id
+
+
 }
