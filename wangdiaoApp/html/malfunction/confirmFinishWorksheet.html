@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content=
+            "maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>确认结单</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/rams.css"/>
+</head>
+<style>
+    .aui-bar-nav {
+        background-color: #e10010;
+    }
+
+    .aui-icon-left {
+        font-size: 0.7rem;
+        font-weight: 700;
+    }
+
+</style>
+<body>
+<div class="bodyContainer">
+    <header class="aui-bar aui-bar-nav headerMarginTop">
+        <div class="aui-pull-left aui-btn">
+            <span class="aui-iconfont aui-icon-left"></span>
+            <span class="aui-Font" onclick="common.closeAndReload()">返回</span>
+        </div>
+        <div class="aui-title">确认结单</div>
+        <div class="aui-pull-right">
+            <span class="aui_Font">确定</span>
+        </div>
+    </header>
+    <div>
+        <div id="workSheet_area" class="aui-padded-l-15">
+            <div class="workSheet_Choose_div" style="height:3.8rem" onclick="getWorkSheetDetails()">
+                <div class="workSheet_Choose_div_sp" style="height:3.8rem">
+                    <div class="inline-block" style="width: 30%;margin-top: 1rem">
+                        <span class="redStar">*</span>
+                        返单对象：
+                    </div>
+                    <div class="inline-block" style="width: 65%;margin-top: 1rem" id="fddx-div">
+                        <input id="fddx-input" type="text" value="" tabindex="0" readonly placeholder="请选择">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+            <!--是否本部门故障-->
+            <div class="workSheet_Choose_div infoMarginTop">
+                <div class="workSheet_Choose_div_sp">
+                    <span class="redStar">*</span>
+                    是否为本部门故障：
+                    <div class="inline-block" style="width: 50%;">
+                        <input id="bbmgz-sel" type="text" value="" tabindex="0" readonly placeholder="">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+            <!--故障区域-->
+            <div class="workSheet_Choose_div">
+                <div class="workSheet_Choose_div_sp">
+                    <span class="redStar">*</span>
+                    故障区域：
+                    <div class="inline-block" style="width:50%;">
+                        <input id="gzqy_input" type="text" value="" tabindex="0" readonly placeholder="">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+            <!--故障原因关键字-->
+            <div class="workSheet_Choose_div">
+                <div class="workSheet_Choose_div_sp">
+                    <span class="redStar">*</span>
+                    故障原因关键字：
+                    <div class="inline-block" style="width:50%;">
+                        <input id="gzgjz_input" type="text" value="" tabindex="0" readonly placeholder="">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+            <!--故障原因-->
+            <div class="workSheet_Choose_div">
+                <div class="workSheet_Choose_div_sp">
+                    <span class="redStar">*</span>
+                    故障原因：
+                    <div class="inline-block" style="width: 50%;">
+                        <input id="gzyy_input" type="text" value="" tabindex="0" readonly placeholder="">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+            <!--是否影响业务-->
+            <div class="workSheet_Choose_div">
+                <div class="workSheet_Choose_div_sp">
+                    <span class="redStar">*</span>
+                    是否影响业务：
+                    <div class="inline-block">
+                        <input id="yxyw-sel" type="text" value="" tabindex="0" readonly placeholder="">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+            <!--接单时间-->
+            <div class="workSheet_Choose_div">
+                <div class="workSheet_Choose_div_sp">
+                    <span class="redStar">*</span>
+                    接单时间：
+                    <div class="inline-block" style="width: 50%;">
+                        <input id="jdsj_input" type="text" value="" tabindex="0" readonly placeholder="">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+            <!--故障历时-->
+            <div class="workSheet_Choose_div">
+                <div class="workSheet_Choose_div_sp">
+                    <span class="redStar">*</span>
+                    故障历时：
+                    <div class="inline-block" style="width: 50%;">
+                        <input id="gzls_input" type="text" value="" tabindex="0" readonly placeholder="">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+            <!--故障专业-->
+            <div class="workSheet_Choose_div">
+                <div class="workSheet_Choose_div_sp">
+                    <span class="redStar">*</span>
+                    故障专业：
+                    <div class="inline-block" style="width: 50%;">
+                        <input id="gzzy_input" type="text" value="" tabindex="0" readonly placeholder="">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+            <!--影响范围-->
+            <div class="workSheet_Choose_div">
+                <div class="workSheet_Choose_div_sp">
+                    <span class="redStar">*</span>
+                    影响范围：
+                    <div class="inline-block" style="width: 50%;">
+                        <input id="yxfw_input" type="text" value="" tabindex="0" readonly placeholder="">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+            <!--反单时间-->
+            <div class="workSheet_Choose_div">
+                <div class="workSheet_Choose_div_sp">
+                    <span class="redStar">*</span>
+                    反单时间：
+                    <div class="inline-block" style="width: 50%;">
+                        <input id="fdsj_input" type="text" value="" tabindex="0" readonly placeholder="">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+            <!--处理总历时-->
+            <div class="workSheet_Choose_div">
+                <div class="workSheet_Choose_div_sp">
+                    <span class="redStar">*</span>
+                    处理总历时：
+                    <div class="inline-block" style="width: 50%;">
+                        <input id="clzls_input" type="text" value="" tabindex="0" readonly placeholder="">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+            <!--挂起历时-->
+            <div class="workSheet_Choose_div">
+                <div class="workSheet_Choose_div_sp">
+                    <span class="redStar">*</span>
+                    挂起历时：
+                    <div class="inline-block" style="width: 50%;">
+                        <input id="gqls_input" type="text" value="" tabindex="0" readonly placeholder="">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+            <!--故障开启时间-->
+            <div class="workSheet_Choose_div">
+                <div class="workSheet_Choose_div_sp">
+                    <span class="redStar">*</span>
+                    故障开启时间：
+                    <div class="inline-block" style="width: 50%;">
+                        <input id="gzkqsj_input" type="text" value="" tabindex="0" readonly placeholder="">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+            <!--业务恢复时间      -->
+            <div class="workSheet_Choose_div">
+                <div class="workSheet_Choose_div_sp">
+                    <span class="redStar">*</span>
+                    业务恢复时间：
+                    <div class="inline-block" style="width: 50%;">
+                        <input id="ywhfsj_input" type="text" tabindex="0" readonly onclick="picker('ywhfsj_input')"
+                               placeholder="请选择时间">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+            <!--处理是否超时-->
+            <div class="workSheet_Choose_div">
+                <div class="workSheet_Choose_div_sp">
+                    <span class="redStar">*</span>
+                    处理是否超时：
+                    <div class="inline-block" style="width: 50%;">
+                        <input id="clsfcs_sel" type="text" value="" tabindex="0" readonly placeholder="">
+                    </div>
+                </div>
+                <div class="greyLine96"></div>
+            </div>
+
+            <!--超时原因-->
+            <div>
+                <div class="workSheet_Reasons_div aui-hide" id="csyy_div">
+                    <div>
+                        <span class="whiteStar">*</span>
+                        超时原因：
+                    </div>
+                    <div>
+                        <textarea placeholder="请输入内容" readonly id="csyy_area"></textarea>
+                    </div>
+                </div>
+                <!--处理过程描述-->
+                <div class="infoMarginTop">
+                    <div>
+                        <span class="whiteStar">*</span>
+                        处理过程描述：
+                    </div>
+                    <div>
+                        <textarea placeholder="" readonly id="clgcms_area"></textarea>
+                    </div>
+                </div>
+                <!--结单备注-->
+                <div class="infoMarginTop">
+                    <div>
+                        <span class="whiteStar">*</span>
+                        结单备注：
+                    </div>
+                    <div>
+                        <textarea placeholder="" id="jdbz_area"></textarea>
+                    </div>
+                </div>
+                <!--路由信息-->
+                <div class="workSheet_Choose_div">
+                    <div class="workSheet_Choose_div_sp">
+                        <span class="whiteStar">*</span>
+                        路由信息：
+                        <div class="inline-block" style="width: 50%;">
+                            <input id="lyxx_input" type="text" readonly value="" tabindex="0" placeholder="">
+                        </div>
+                    </div>
+                    <div class="greyLine96"></div>
+                </div>
+                <div style="text-align: center;" class="aui-margin-t-15 aui-margin-b-15">
+                    <div onclick="submitData()" class="aui-btn">提交</div>
+                    <div onclick="openReturnReprocess()" class="aui-btn aui-margin-l-10">退回并重新处理</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script id="confirm_finsh_ws" type="text/template">
+    <div id="selectDiv" data-name="{{=it.objectName}}" data-time="{{=''}}" style="background-color: red">
+        <span>反馈人:{{=it.objectName}}</span></br>
+        <span>反馈时间:{{=it.objectTime}}</span>
+    </div>
+</script>
+<script type="text/javascript" src="../../script/malfunction/jquery-3.2.1.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/config.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/doT.min.js"></script>
+<script type="text/javascript" src="../../script/malfunction/confirmFinishWorksheet.js"></script>
+<script>
+    var wsNum = $api.getStorage(storageKey.wsNum);       //工单号
+    var processId = $api.getStorage(storageKey.processId);
+    var json;
+    var dm_pro;  //故障专业字典值
+    var isDept;  //是否本部门字典值
+    var area;  //故障区域字典值
+    var reasonKey; //故障原因关键字字典值
+    var infbus;  //是否影响业务字典值
+    var dmdeallast1;  //故障历时字典值
+    var suspendlast1;  //挂起历时
+    var objectNum ;
+    var objectParams;
+    var objectName ;
+    apiready = function () {
+        //监听操作完成事件 刷新流程菜单
+        api.addEventListener({
+            name: 'worksheet_keyback'
+        },function () {
+            initMenu();
+            window.location.reload();
+        })
+
+        initObject();
+
+        api.addEventListener({
+            name:'closeSelectFrame'
+        },function(ret,err){
+            if(ret&&ret.value){
+                $api.html($api.byId('fddx-div'), '');
+                var conTmpl = doT.template($api.text($api.byId('confirm_finsh_ws')));
+                $api.html($api.byId('fddx-div'), conTmpl(ret.value));
+                objectName = ret.value.objectName
+                common.post({
+                    url: config.accountWorksheetDetail,
+                    isLoading:true,
+                    data:{
+                        wsNum:wsNum,
+                        processId:processId
+                    },
+                    success: function (ret) {
+                        if (ret && ret.data && ret.data.json1) {
+                            var str = JSON.stringify(ret).replace(/\\|\//g, '');
+                            str = str.replace('"{', '{');
+                            str = str.replace('}"', '}');
+                            console.log(str)
+                            json = $api.strToJson(str)
+                            json = json.data.json1;
+                            console.log(JSON.stringify(json))
+                            //根据字典值判断是否
+                            if (json.ISEXCLUDE === '1010901') {
+                                $api.val($api.byId('bbmgz-sel'), '是');
+                            } else {
+                                $api.val($api.byId('bbmgz-sel'), '否');
+                            }
+                            $api.val($api.byId('gzqy_input'), json.AREANAME);
+                            $api.val($api.byId('gzgjz_input'), json.REASON_KEY_NAME);
+                            $api.val($api.byId('gzyy_input'), json.REASON);
+                            $api.val($api.byId('yxyw-sel'), json.INFBUSNAME);
+                            $api.val($api.byId('jdsj_input'), json.RECTIME);
+                            $api.val($api.byId('gzls_input'), json.DMDEALLAST);
+                            $api.val($api.byId('gzzy_input'), json.DMPRONAME);
+                            $api.val($api.byId('yxfw_input'), json.INFLUENCE?json.INFLUENCE:'');
+                            $api.val($api.byId('fdsj_input'), json.DEALDATE);  //返单时间
+                            $api.val($api.byId('clzls_input'), json.DEALLAST);
+                            $api.val($api.byId('gqls_input'), json.SUSPEND_TIME_COUNT);
+                            $api.val($api.byId('gzkqsj_input'), json.DM_START_TIME);
+                            $api.val($api.byId('clsfcs_sel'), json.TIMEOUT);
+                            if (json.TIMEOUT === '是') {
+                                $api.removeCls($api.byId('csyy_div'), 'aui-hide');
+                            }
+                            $api.val($api.byId('csyy_area'), json.TIMEOUT_REASON);
+                            $api.val($api.byId('clgcms_area'), json.REMARK); //处理过程描述
+                            $api.val($api.byId('lyxx_input'), json.ROUTEINFO);
+                            api.hideProgress();
+                            dm_pro = json.PRO;  //故障专业字典值
+                            isDept = json.ISEXCLUDE;  //是否本部门字典值
+                            area = json.AREA;  //故障区域字典值
+                            reasonKey = json.REASON_KEY; //故障原因关键字字典值
+                            infbus = json.INFBUS;  //是否影响业务字典值
+                            dmdeallast1 = '';  //故障历时字典值
+                            suspendlast1 = json.SUSPEND_TIME_COUNT;  //挂起历时
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    //获取对象
+    function submitData() {
+        var area_name = $api.trim($api.val($api.byId('gzqy_input')));//故障区域
+        var reasonKey_name = $api.trim($api.val($api.byId('gzgjz_input')));//故障原因关键字
+        var reason1 = $api.trim($api.val($api.byId('gzyy_input')));//故障原因
+        var infbus_name = $api.trim($api.val($api.byId('yxyw-sel')));//是否影响业务
+        var rectime = $api.trim($api.val($api.byId('jdsj_input'))); //接单时间
+        var dmdeallast = $api.trim($api.val($api.byId('gzls_input')));  //故障历时
+        var dmpro = $api.trim($api.val($api.byId('gzzy_input'))); //故障专业
+        var influence1 = $api.trim($api.val($api.byId('yxfw_input'))); //影响范围
+        var deallast1 = $api.trim($api.val($api.byId('clzls_input')));  //处理总历时
+        var suspendlast1 = $api.trim($api.val($api.byId('gqls_input')));  //挂起历时
+        var dm_start_time = $api.trim($api.val($api.byId('gzkqsj_input'))); //故障开启时间
+        var busrecDateStr = $api.trim($api.val($api.byId('ywhfsj_input')));
+        var busrecDate = $api.trim($api.val($api.byId('ywhfsj_input')));  //业务恢复时间
+        var timeout1 = $api.trim($api.val($api.byId('clsfcs_sel')));  //处理是否超时
+        var timeoutReason = $api.trim($api.val($api.byId('csyy_area')));  //超时原因
+        var remark = $api.trim($api.val($api.byId('clgcms_area')));  //处理过程描述
+        var column6 = $api.trim($api.val($api.byId('jdbz_area')));  //结单备注-------------未确认
+        var routeinfo = $api.trim($api.val($api.byId('lyxx_input')));//路由信息
+
+        var fddx = $api.first($api.byId('fddx-div'));
+        var eleId = $api.attr(fddx, 'id');
+        if(eleId!=="selectDiv"){
+            api.toast({
+                msg: '请选择返单对象',
+                duration: 2000,
+                location: 'middle'
+            });
+        }else if(busrecDateStr===""||busrecDateStr===null){
+            api.toast({
+                msg: '业务恢复时间不可为空',
+                duration: 2000,
+                location: 'middle'
+            });
+        }else{
+            api.confirm({
+                title: '确认结单',
+                msg: '是否提交？',
+                buttons: ['确定', '取消']
+            }, function(retBtn, err) {
+                if(retBtn.buttonIndex===1){
+                    common.post({
+                        url: config.confirmFinishWorksheetUrl ,
+                        isLoading: false,
+                        data:{
+                            wsNum:wsNum,
+                            processId : processId,
+                            isexclude_name : '',
+                            area_name : area_name,
+                            reason1 : reason1,
+                             reasonKey_name : reasonKey_name,
+                             infbus_name :  infbus_name,
+                             deleteInfo :  '',
+                             busrecDate :  busrecDate,
+                             dmhapptime1 :  dm_start_time,
+                             deallast1 :  deallast1,
+                             suspendlast1 :  suspendlast1,
+                             timeoutReason :  timeoutReason,
+                             timeout1 :  timeout1,
+                             dm_pro :  dm_pro,
+                             isexclude :  isDept,
+                             area :  area,
+                             reasonKey :  reasonKey,
+                             infbus :  infbus,
+                             dmdeallast1 :  dmdeallast,
+                             column6 :  column6,
+                             influence1 :  influence1,
+                             routeinfo :  routeinfo,
+                             remark1 :  remark
+                        },
+                        success: function (ret) {
+                            if(ret&&ret.status === "200"){
+                                api.toast({
+                                    msg: '提交成功！',
+                                    duration: 2000,
+                                    location: 'middle'
+                                });
+                                setTimeout(function(){
+                                    api.closeWin();
+                                },3*100)
+
+                            }else{
+                                api.toast({
+                                    msg: '提交失败!！',
+                                    duration: 2000,
+                                    location: 'middle'
+                                });
+                                return
+                            }
+                            common.reloadParentPage();
+                        }, error: function () {
+                            alert("获取数据失败", "error");
+                        }
+                    });
+                }
+            });
+        }
+
+    }
+    //初始化对象选择下拉选
+    function initObject() {
+        common.post({
+            url: config.chooseObjectUrl ,
+            isLoading: false,
+            data:{
+                wsNum:wsNum,
+                processId:processId
+            },
+            success: function (ret) {
+                //填写信息
+                if (ret && ret.status==='200'&&ret.data) {
+                    var data = ret.data;
+                    objectNum = ((data.result).split(";")).length-1 //有几个对象
+                    var objects = (data.result).split(";")
+                    var resultArr;    //字符分割;
+                    var conTmpl = doT.template($api.text($api.byId('confirm_finsh_ws')));
+                    objectParams = {objectInfo:[]}
+                    for(var i=0;i<objects.length-1;i++){
+                        resultArr = objects[i].split(",");
+                        (objectParams.objectInfo).push(resultArr);
+                    }
+                    $api.html($api.byId('fddx-sel'), conTmpl(resultArr));
+                } else {
+                    api.alert({
+                        msg: '没有查到信息'
+                    })
+                }
+            }
+        });
+    }
+    //获取工单详情
+    function getWorkSheetDetails() {
+
+            api.openFrame({
+                name: 'objectSelectChangeLine',
+                url: './objectSelectChangeLine.html',
+                rect: {
+                    x: 50,
+                    y: 200,
+                    w: 250,
+                    h: 80*objectNum
+                },
+                pageParam: {objectParams:objectParams
+                },
+            });
+
+
+
+    }
+    //退回重新处理
+    function openReturnReprocess(){
+        var returnName = $api.attr($api.byId('selectDiv'), 'data-name');
+        if(returnName===null||returnName===""||returnName===undefined){
+            api.toast({
+                msg: '请选择返单对象',
+                duration: 2000,
+                location: 'middle'
+            });
+        }else{
+            api.openWin({
+                name: 'returnToreProcessing',
+                url: './returnToreProcessing.html',
+                pageParam: {objectName: objectName}
+            });
+        }
+    }
+    //时间选择器
+    function picker(id) {
+        api.openPicker({
+            type: 'date',
+            title: '开始时间'
+        }, function (ret, err) {
+            var hYear = ret.year;
+            var hMonth = ret.month;
+            var hDay = ret.day;
+            api.openPicker({
+                type: 'time',
+                title: '开始时间'
+            }, function (ret, err) {
+                var hh = ret.hour;
+                var hmin = ret.minute;
+                var hDate = hYear + "-" + (hMonth < 10 ? "0" + hMonth : hMonth) + "-" + (hDay < 10 ? "0" + hDay : hDay) + " " + (hh < 10 ? "0" + hh : hh) + ":" + (hmin < 10 ? "0" + hmin : hmin) + ":00";
+
+                $api.val($api.byId(id), hDate);
+            });
+        });
+
+    }
+</script>
+</body>
+</html>
