@@ -22,25 +22,25 @@
 </style>
 <body>
 <div class="bodyContainer">
-    <header class="aui-bar aui-bar-nav headerMarginTop">
+    <header class="aui-bar aui-bar-nav headerMarginTop" style="position: fixed;">
         <div class="aui-pull-left aui-btn">
             <span class="aui-iconfont aui-icon-left"></span>
-            <span class="aui-Font" onclick="common.closeAndReload()">返回</span>
+            <span class="aui-Font" onclick="common.closeAndReloadParentPage()">返回</span>
         </div>
         <div class="aui-title">确认结单</div>
-        <div class="aui-pull-right">
+        <div class="aui-pull-right header_confirm">
             <span class="aui_Font">确定</span>
         </div>
     </header>
-    <div>
+    <div style="margin-top: 3rem">
         <div id="workSheet_area" class="aui-padded-l-15">
             <div class="workSheet_Choose_div" style="height:3.8rem" onclick="getWorkSheetDetails()">
                 <div class="workSheet_Choose_div_sp" style="height:3.8rem">
-                    <div class="inline-block" style="width: 30%;margin-top: 1rem">
+                    <div class="inline-block" style="margin-top: 1rem">
                         <span class="redStar">*</span>
                         返单对象：
                     </div>
-                    <div class="inline-block" style="width: 65%;margin-top: 1rem" id="fddx-div">
+                    <div class="inline-block" style="width: 70%;margin-top: 1rem" id="fddx-div">
                         <input id="fddx-input" type="text" value="" tabindex="0" readonly placeholder="请选择">
                     </div>
                 </div>
@@ -245,7 +245,7 @@
                     </div>
                 </div>
                 <!--路由信息-->
-                <div class="workSheet_Choose_div">
+                <div class="workSheet_Choose_div aui-hide" id="toute_Info">
                     <div class="workSheet_Choose_div_sp">
                         <span class="whiteStar">*</span>
                         路由信息：
@@ -289,17 +289,14 @@
     var objectNum ;
     var objectParams;
     var objectName ;
+    var initObjectFlag = false;
     apiready = function () {
-        //监听操作完成事件 刷新流程菜单
-        api.addEventListener({
-            name: 'worksheet_keyback'
-        },function () {
-            initMenu();
-            window.location.reload();
-        })
-
         initObject();
-
+        api.addEventListener({
+            name: 'keyback'
+        }, function () {
+            common.closeAndReloadParentPage()
+        })
         api.addEventListener({
             name:'closeSelectFrame'
         },function(ret,err){
@@ -330,25 +327,29 @@
                             } else {
                                 $api.val($api.byId('bbmgz-sel'), '否');
                             }
-                            $api.val($api.byId('gzqy_input'), json.AREANAME);
-                            $api.val($api.byId('gzgjz_input'), json.REASON_KEY_NAME);
-                            $api.val($api.byId('gzyy_input'), json.REASON);
-                            $api.val($api.byId('yxyw-sel'), json.INFBUSNAME);
-                            $api.val($api.byId('jdsj_input'), json.RECTIME);
-                            $api.val($api.byId('gzls_input'), json.DMDEALLAST);
-                            $api.val($api.byId('gzzy_input'), json.DMPRONAME);
-                            $api.val($api.byId('yxfw_input'), json.INFLUENCE?json.INFLUENCE:'');
-                            $api.val($api.byId('fdsj_input'), json.DEALDATE);  //返单时间
-                            $api.val($api.byId('clzls_input'), json.DEALLAST);
-                            $api.val($api.byId('gqls_input'), json.SUSPEND_TIME_COUNT);
-                            $api.val($api.byId('gzkqsj_input'), json.DM_START_TIME);
-                            $api.val($api.byId('clsfcs_sel'), json.TIMEOUT);
+                            isNotNull("gzqy_input",json.AREANAME)
+                            isNotNull("gzgjz_input",json.REASON_KEY_NAME)
+                            isNotNull("gzyy_input",json.REASON)
+                            isNotNull("yxyw-sel",json.INFBUSNAME)
+                            isNotNull("jdsj_input",json.RECTIME)
+                            isNotNull("gzls_input",json.DMDEALLAST)
+                            isNotNull("gzzy_input",json.DMPRONAME)
+                            isNotNull("yxfw_input",json.INFLUENCE)
+
+                            isNotNull("fdsj_input",json.DEALDATE)
+                            isNotNull("clzls_input",json.DEALLAST)
+                            isNotNull("gqls_input",json.SUSPEND_TIME_COUNT)
+                            isNotNull("gzkqsj_input",json.DM_START_TIME)
+                            isNotNull("clsfcs_sel",json.TIMEOUT)
                             if (json.TIMEOUT === '是') {
                                 $api.removeCls($api.byId('csyy_div'), 'aui-hide');
                             }
-                            $api.val($api.byId('csyy_area'), json.TIMEOUT_REASON);
-                            $api.val($api.byId('clgcms_area'), json.REMARK); //处理过程描述
-                            $api.val($api.byId('lyxx_input'), json.ROUTEINFO);
+                            isNotNull("csyy_area",json.TIMEOUT_REASON)
+                            isNotNull("clgcms_area",json.REMARK)
+                            if(json.PRO === "1010101"){
+                                $api.attr($api.byId("toute_Info"), 'class', 'aui-show');
+                            }
+                            isNotNull("lyxx_input",json.ROUTEINFO)
                             api.hideProgress();
                             dm_pro = json.PRO;  //故障专业字典值
                             isDept = json.ISEXCLUDE;  //是否本部门字典值
@@ -363,7 +364,14 @@
             }
         })
     }
+    function isNotNull(id,data){
+        if(data =="null"||data===""){
+            $api.val($api.byId(id), "");
+        }else{
+            $api.val($api.byId(id), data);
+        }
 
+    }
     //获取对象
     function submitData() {
         var area_name = $api.trim($api.val($api.byId('gzqy_input')));//故障区域
@@ -437,26 +445,24 @@
                         },
                         success: function (ret) {
                             if(ret&&ret.status === "200"){
-                                api.toast({
-                                    msg: '提交成功！',
-                                    duration: 2000,
-                                    location: 'middle'
-                                });
-                                setTimeout(function(){
+                                api.alert({
+                                    title: '提示',
+                                    msg: '确认结单操作成功！',
+                                }, function (ret, err) {
                                     api.closeWin();
-                                },3*100)
-
+                                });
+                                common.reloadParentPage();
                             }else{
+                                var msg = '确认结单操作失败！'
+                                if (ret&&ret.data&&ret.data.message){
+                                    msg = ret.data.message
+                                }
                                 api.toast({
-                                    msg: '提交失败!！',
-                                    duration: 2000,
+                                    msg:  msg,
+                                    duration: config.duration,
                                     location: 'middle'
                                 });
-                                return
                             }
-                            common.reloadParentPage();
-                        }, error: function () {
-                            alert("获取数据失败", "error");
                         }
                     });
                 }
@@ -487,32 +493,40 @@
                         (objectParams.objectInfo).push(resultArr);
                     }
                     $api.html($api.byId('fddx-sel'), conTmpl(resultArr));
+                    initObjectFlag = true;
                 } else {
                     api.alert({
                         msg: '没有查到信息'
                     })
+                    return
                 }
+                api.hideProgress();
             }
         });
     }
     //获取工单详情
     function getWorkSheetDetails() {
-
-            api.openFrame({
-                name: 'objectSelectChangeLine',
-                url: './objectSelectChangeLine.html',
-                rect: {
-                    x: 50,
-                    y: 200,
-                    w: 250,
-                    h: 80*objectNum
-                },
-                pageParam: {objectParams:objectParams
-                },
-            });
-
-
-
+            if(initObjectFlag){
+                api.openFrame({
+                    name: 'objectSelectChangeLine',
+                    url: './objectSelectChangeLine.html',
+                    rect: {
+                        x: 50,
+                        y: 200,
+                        w: 250,
+                        h: 80*objectNum
+                    },
+                    pageParam: {objectParams:objectParams
+                    },
+                });
+                initObjectFlag = false;
+            }else{
+                api.toast({
+                    msg: '返单对象加载中，请稍后...',
+                    duration: 2000,
+                    location: 'middle'
+                });
+            }
     }
     //退回重新处理
     function openReturnReprocess(){

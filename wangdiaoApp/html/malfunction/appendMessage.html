@@ -24,10 +24,10 @@
 <div class="bodyContainer bodyPosition">
     <header class="aui-bar aui-bar-nav headerMarginTop">
         <div class="aui-pull-left aui-btn">
-            <span class="aui-iconfont aui-icon-left"></span><span class="aui-Font" onclick="common.closeAndReload()">返回</span>
+            <span class="aui-iconfont aui-icon-left"></span><span class="aui-Font" onclick="common.closeAndReloadParentPage()">返回</span>
         </div>
         <div class="aui-title">信息追加</div>
-        <div class="aui-pull-right">
+        <div class="aui-pull-right header_confirm">
             <span class="aui_Font" onclick="save()">确定</span>
         </div>
     </header>
@@ -52,10 +52,7 @@
         api.addEventListener({
             name: 'keyback'
         }, function () {
-            api.closeWin();
-            api.sendEvent({
-                name: 'worksheet_keyback',
-            });
+            common.closeAndReloadParentPage()
         })
     }
     function save() {
@@ -71,33 +68,41 @@
             });
             return;
         }
-        common.post({
-            url:config.appendMessageUrl,
-            isLoading: true,
-            text: "提交中...",
-            data:{
-                wsNum:wsNum,
-                processId:processId,
-                remark: remark,
-                imgID:imgID
-            },
-            success: function (ret) {
-                if (ret.status==='200'){
-                    api.alert({
-                        title: '提示',
-                        msg: '信息追加操作成功！',
-                    }, function (ret, err) {
-                        api.closeWin();
-                    });
-                    common.reloadParentPage();
-                } else {
-                    // 因为返回的错误信息是英文，所有没有单独显示错误信息。
-                    api.toast({
-                        msg:  '信息追加操作失败！',
-                        duration: config.duration,
-                        location: 'middle'
-                    });
-                }
+        api.confirm({
+            title: '信息追加',
+            msg: '是否提交？',
+            buttons: ['确定', '取消']
+        }, function(retBtn, err) {
+            if(retBtn.buttonIndex===1){
+                common.post({
+                    url:config.appendMessageUrl,
+                    isLoading: true,
+                    text: "提交中...",
+                    data:{
+                        wsNum:wsNum,
+                        processId:processId,
+                        remark: remark,
+                        imgID:imgID
+                    },
+                    success: function (ret) {
+                        if (ret.status==='200'){
+                            api.alert({
+                                title: '提示',
+                                msg: '信息追加操作成功！',
+                            }, function (ret, err) {
+                                api.closeWin();
+                            });
+                            common.reloadParentPage();
+                        } else {
+                            // 因为返回的错误信息是英文，所有没有单独显示错误信息。
+                            api.toast({
+                                msg:  '信息追加操作失败！',
+                                duration: config.duration,
+                                location: 'middle'
+                            });
+                        }
+                    }
+                });
             }
         });
     }

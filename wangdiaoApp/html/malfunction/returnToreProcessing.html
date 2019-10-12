@@ -25,7 +25,7 @@
             <span class="aui-iconfont aui-icon-left"></span><span class="aui-Font" onclick="api.closeWin()">返回</span>
         </div>
         <div class="aui-title">退回重新处理</div>
-        <div class="aui-pull-right">
+        <div class="aui-pull-right header_confirm">
             <span class="aui_Font" onclick="save()">确定</span>
         </div>
     </header>
@@ -90,6 +90,11 @@
         var params = api.pageParam
             $api.val($api.byId('user'), params.objectName);
 
+        api.addEventListener({
+            name: 'keyback'
+        }, function () {
+            common.closeAndReloadParentPage()
+        })
     }
     function initSelect(){
         common.post({
@@ -144,38 +149,45 @@
             });
             return;
         }
-        console.log(dispose_way)
-        console.log(deleteInfo)
-        common.post({
-            url:config.returnToreProcessingUrl,
-            isLoading: true,
-            text: "提交中...",
-            data:{
-                wsNum : wsNum ,
-                processId : processId ,
-                remark : deleteInfo ,
-                user : user ,
-                dispose_way : dispose_way
-            },
-            success: function (ret) {
-                if (ret.status==='200'){
-                    api.alert({
-                        title: '提示',
-                        msg: '退回重新处理操作成功！',
-                    }, function (ret, err) {
-                        api.closeWin();
-                    });
-                } else {
-                    // 因为返回的错误信息是英文，所有没有单独显示错误信息。
-                    api.toast({
-                        msg:  '退回重新处理操作失败！',
-                        duration: config.duration,
-                        location: 'middle'
-                    });
-                }
+        api.confirm({
+            title: '退回重新处理',
+            msg: '是否提交？',
+            buttons: ['确定', '取消']
+        }, function(retBtn, err) {
+            if(retBtn.buttonIndex===1){
+                common.post({
+                    url:config.returnToreProcessingUrl,
+                    isLoading: true,
+                    text: "提交中...",
+                    data:{
+                        wsNum : wsNum ,
+                        processId : processId ,
+                        remark : deleteInfo ,
+                        user : user ,
+                        dispose_way : dispose_way
+                    },
+                    success: function (ret) {
+                        if (ret.status==='200'){
+                            api.alert({
+                                title: '提示',
+                                msg: '退回重新处理操作成功！',
+                            }, function (ret, err) {
+                                api.closeWin();
+                            });
+                        } else {
+                            // 因为返回的错误信息是英文，所有没有单独显示错误信息。
+                            api.toast({
+                                msg:  '退回重新处理操作失败！',
+                                duration: config.duration,
+                                location: 'middle'
+                            });
+                        }
 
+                    }
+                });
             }
         });
+
     }
 </script>
 <script type="text/javascript" src="../../script/malfunction/jquery-3.2.1.js"></script>

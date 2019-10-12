@@ -29,7 +29,7 @@
 <footer class="aui-bar aui-bar-tab" id="footer" style="background-color: #e7e7e7; color: #292929">
     <div class="redLine"></div>
     <div style="background-color: white">
-        <div class="aui-bar-tab-item" tapmode onclick="openAppointPage('worksheet_manage')">
+        <div class="aui-bar-tab-item" tapmode>
             <img class="aui-iconfont"  style="margin-left: 40%" src="../image/gongdanchuli_orange_icon.png">
             <div class="aui-bar-tab-label" style="margin-top: 0.1rem;color: #ff6600">工单处理</div>
         </div>
@@ -167,23 +167,12 @@
         getWaitAndEndCount();
         getWaitWorkSheetList();
         keyBackListener()
-        //监听登出事件
-        api.addEventListener({
-            name: 'loginout'
-        },function () {
-            getWaitAndEndCount();
-            getWaitWorkSheetList();
-            keyBackListener();
-        });
         //监听keyback返回事件
         api.addEventListener({
-            name: 'keyback_reload'
+            name: 'reload_this_page'
         },function () {
             window.location.reload();
-
         })
-
-
     }
 
     //下拉刷新

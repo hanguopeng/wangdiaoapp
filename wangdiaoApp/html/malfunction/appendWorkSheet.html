@@ -30,10 +30,10 @@
 <div class="bodyContainer bodyPosition">
     <header class="aui-bar aui-bar-nav headerMarginTop">
         <div class="aui-pull-left aui-btn">
-            <span class="aui-iconfont aui-icon-left"></span><span class="aui-Font" onclick="common.closeAndReload()">返回</span>
+            <span class="aui-iconfont aui-icon-left"></span><span class="aui-Font" onclick="common.closeAndReloadParentPage()">返回</span>
         </div>
         <div class="aui-title">追派</div>
-        <div class="aui-pull-right">
+        <div class="aui-pull-right header_confirm">
             <span class="aui_Font" onclick="save()">确定</span>
         </div>
     </header>
@@ -77,7 +77,7 @@
             <div class="workSheet_Choose_div">
                 <div  class="workSheet_Choose_div_sp" style="padding-top: 0.55rem">
                     <div class="inline-block" style="width: 30% ">
-                        <span class="redStar">*</span>
+                        <span class="whiteStar">*</span>
                         抄送对象：
                     </div>
                     <div class="inline-block" style="width: 50% ">
@@ -148,10 +148,7 @@
         api.addEventListener({
             name: 'keyback'
         }, function () {
-            api.closeWin();
-            api.sendEvent({
-                name: 'worksheet_keyback',
-            });
+            common.closeAndReloadParentPage()
         })
     }
 
@@ -222,14 +219,6 @@
         }
         var chuliGroupd = csdxId;                                       //抄送对象
         var chuliGroupdType = csdxType;                                        //抄送对象类型
-        if(common.isEmpty(chuliGroupd)){
-            api.toast({
-                msg: '抄送对象不能为空！',
-                duration: config.duration,
-                location: 'middle'
-            });
-            return;
-        }
         var dispose_way = $("#disposeWay option:selected").val();         //追派类型
         if(common.isEmpty(dispose_way)){
             api.toast({
@@ -243,41 +232,48 @@
         var processId = $api.getStorage(storageKey.processId);          //流程id
         var remark = $api.trim($api.val($api.byId('remark')));            //追派原因
 
-
-        common.post({
-            url:config.appendWorksheetUrl,
-            isLoading: true,
-            text: "提交中...",
-            data:{
-                wsNum : wsNum,
-                remark : remark,
-                paiwangGroupd : paiwangGroupd,
-                paiwangGroupdType : paiwangGroupdType,
-                processId : processId,
-                chuliGroupd : chuliGroupd,
-                chuliGroupdType : chuliGroupdType,
-                dispose_way : dispose_way
-            },
-            success: function (ret) {
-                if (ret.status==='200'){
-                    api.alert({
-                        title: '提示',
-                        msg: '追派操作成功！',
-                    }, function (ret, err) {
-                        api.closeWin();
-                    });
-                    common.reloadParentPage();
-                } else {
-                    var msg = '追派操作失败！'
-                    if (ret&&ret.data&&ret.data.message){
-                        msg = ret.data.message
+        api.confirm({
+            title: '追派',
+            msg: '是否提交？',
+            buttons: ['确定', '取消']
+        }, function(retBtn, err) {
+            if(retBtn.buttonIndex===1){
+                common.post({
+                    url:config.appendWorksheetUrl,
+                    isLoading: true,
+                    text: "提交中...",
+                    data:{
+                        wsNum : wsNum,
+                        remark : remark,
+                        paiwangGroupd : paiwangGroupd,
+                        paiwangGroupdType : paiwangGroupdType,
+                        processId : processId,
+                        chuliGroupd : chuliGroupd,
+                        chuliGroupdType : chuliGroupdType,
+                        dispose_way : dispose_way
+                    },
+                    success: function (ret) {
+                        if (ret.status==='200'){
+                            api.alert({
+                                title: '提示',
+                                msg: '追派操作成功！',
+                            }, function (ret, err) {
+                                api.closeWin();
+                            });
+                            common.reloadParentPage();
+                        } else {
+                            var msg = '追派操作失败！'
+                            if (ret&&ret.data&&ret.data.message){
+                                msg = ret.data.message
+                            }
+                            api.toast({
+                                msg:  msg,
+                                duration: config.duration,
+                                location: 'middle'
+                            });
+                        }
                     }
-                    api.toast({
-                        msg:  msg,
-                        duration: config.duration,
-                        location: 'middle'
-                    });
-                }
+                });
             }
         });
     }

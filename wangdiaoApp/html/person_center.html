@@ -112,7 +112,7 @@
             <img class="aui-iconfont" style="margin-left: 37.5%" src="../image/peizhiguanli_icon.png">
             <div class="aui-bar-tab-label" style="margin-top: 0.1rem">配置管理</div>
         </div>
-        <div class="aui-bar-tab-item" tapmode onclick="openAppointPage('person_center')">
+        <div class="aui-bar-tab-item" tapmode>
             <img class="aui-iconfont" style="margin-left: 39%" src="../image/wode_orange_icon.png">
             <div class="aui-bar-tab-label" style="margin-top: 0.1rem;color: #ff6600">我的</div>
         </div>
@@ -142,10 +142,46 @@
     var personInfo = $api.getStorage(storageKey.loginUser);
     var UIActionProgress;
     var fs;
+    var times = 0;
+    var time1, time2;
     apiready = function(){
         UIActionProgress = api.require('UIActionProgress');
         fs = api.require('fs');
-        userAndversionInfo()
+        userAndversionInfo();
+        keyBackListener()
+    }
+    function keyBackListener() {
+        api.addEventListener({
+            name: 'keyback'
+        }, function (ret, err) {
+            if (times == 0) {
+                time1 = new Date().getTime();
+                times = 1;
+                api.toast({
+                    msg: '再按一次返回键退出',
+                    duration: 2000,
+                    location: 'middle'
+                });
+            } else if (times == 1) {
+                time2 = new Date().getTime();
+                if (time2 - time1 < 2000) {
+                    api.closeWidget({
+                        id: api.appId,
+                        retData: {
+                            name: 'closeWidget'
+                        },
+                        silent: true
+                    });
+                } else {
+                    times = 0;
+                    api.toast({
+                        msg: '再按一次返回键退出',
+                        duration: 2000,
+                        location: 'middle'
+                    });
+                }
+            }
+        });
     }
     //用户信息及app版本信息
     function userAndversionInfo(){

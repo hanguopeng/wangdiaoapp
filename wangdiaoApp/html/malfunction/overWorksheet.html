@@ -22,17 +22,17 @@
 </head>
 <body>
 <div class="bodyContainer bodyPosition">
-    <header class="aui-bar aui-bar-nav headerMarginTop">
+    <header class="aui-bar aui-bar-nav headerMarginTop" style="position: fixed;">
         <div class="aui-pull-left aui-btn">
-            <span class="aui-iconfont aui-icon-left"></span><span class="aui-Font" onclick="common.closeAndReload()">返回</span>
+            <span class="aui-iconfont aui-icon-left"></span><span class="aui-Font" onclick="common.closeAndReloadParentPage()">返回</span>
         </div>
         <div class="aui-title">返单</div>
-        <div class="aui-pull-right">
+        <div class="aui-pull-right header_confirm">
             <span class="aui_Font" onclick="save()">确定</span>
         </div>
     </header>
 
-    <div>
+    <div style="margin-top: 3rem">
         <div id="workSheet_area" class="aui-padded-l-15">
             <!--是否本部门故障-->
             <div class="workSheet_Choose_div">
@@ -260,7 +260,7 @@
                 </div>
             </div>
             <!--路由信息-->
-            <div class="workSheet_Choose_div" >
+            <div class="workSheet_Choose_div aui-hide" id="lyxx">
                 <div class="workSheet_Choose_div_sp">
                     <span class="redStar">*</span>
                     路由信息：
@@ -268,7 +268,7 @@
                         <input id="lyxx_input" type="text" value="" tabindex="0"   placeholder="请输入">
                     </div>
                 </div>
-                <div class="greyLine96"></div>
+                <div class="greyLine96" style="margin-bottom: 0.3rem"></div>
             </div>
         </div>
     </div>
@@ -330,7 +330,11 @@
     {{ for(var i=0;i<it.nameList.length;i++){
     if(!common.isEmpty(it.nameList[i])){
     }}
+    {{?it.idList[i]===it.pro}}
+    <option value="{{=it.idList[i]}}" selected>{{=it.nameList[i]}}</option>
+    {{??}}
     <option value="{{=it.idList[i]}}">{{=it.nameList[i]}}</option>
+    {{?}}
     {{
     }
     }
@@ -338,16 +342,14 @@
 </script>
 <script>
     var startTime;
+    var initialPro;
     apiready = function() {
         initSelect();
         //监听操作完成事件 刷新流程菜单
         api.addEventListener({
             name: 'keyback'
         }, function () {
-            api.closeWin();
-            api.sendEvent({
-                name: 'worksheet_keyback',
-            });
+            common.closeAndReloadParentPage()
         })
     }
     //动态加载select
@@ -365,6 +367,7 @@
                 if (ret&&ret.status==='200'&&ret.data) {
                     var data = ret.data;
                     startTime = data.date2
+                    initialPro = data.pro
                     $api.val($api.byId('clls_input'), data.date1);//处理历时
                     $api.val($api.byId('gqls_input'), data.date6);//挂起历时
                     $api.val($api.byId('gzkqsj_input'), data.date2);//故障开启时间
@@ -373,15 +376,17 @@
                     $api.val($api.byId('fdsj_input'), data.date);//返单时间
                     $api.val($api.byId('pfsj_input'), data.date3);//派发时间
                     $api.val($api.byId('gzls_input'), data.date4);//故障历时
-                    if (data.timeout==='是'){
+                    if (data.timeout==='是'){    //超时显示超时原因
                         $api.addCls($api.byId('csyy'),'aui-show')
                     }
-
+                    if (data.pro==='1010101'){   //移动专业显示路由信息
+                        $api.addCls($api.byId('lyxx'),'aui-show')
+                    }
                     ifDeptMalfunction();
                     malfunctionArea();
                     malfunctionReasonKeyword(data.pro);
                     ifInfluenceProfessionalWork();
-                    malfunctionSpecialty();
+                    malfunctionSpecialty(data.pro);
                 }
             }
         })
@@ -403,7 +408,8 @@
                 objTemp.style.color = 'red';
             }
         }
-        var yxywSel = $("#yxyw-sel option:selected").val();//获取是否影响业务的值，无论是否本部门故障，如果影响业务为否，业务影响范围都不必填
+        //获取是否影响业务的值，无论是否本部门故障，如果影响业务为否，业务影响范围都不必填
+        var yxywSel = $("#yxyw-sel option:selected").val();
         if (yxywSel&&yxywSel==='1011001'){  //影响业务
             $api.byId('yxfwAreaStar').style.color = 'red'
         } else if(yxywSel&&yxywSel==='1011002'){  //不影响业务
@@ -416,42 +422,170 @@
         var processId = $api.getStorage(storageKey.processId);      //流程id
 
         var isexclude = $("#bbmgz-sel option:selected").val();                  //是否本部门故障
-        var remark = $api.trim($api.val($api.byId('clgcms_area')));             //处理过程描述
+        if (common.isEmpty(isexclude)) {
+            api.toast({
+                msg: '是否本部门故障不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }
+        var isDeptMalfunction = this.isDeptMalfunction(isexclude);   //是否本部门故障
+
         var area = $("#gzqy-sel option:selected").val();                        //故障区域
+        if (isDeptMalfunction&&common.isEmpty(area)) {
+            api.toast({
+                msg: '故障区域不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }
+        var timeout =$api.trim($api.val($api.byId('clsfcs_sel')));               //处理是否超时
         var timeoutReason = $api.trim($api.val($api.byId('csyy_area')));        //超时原因
+        if (timeout==='是'&&isDeptMalfunction&&common.isEmpty(timeoutReason)) {
+            api.toast({
+                msg: '超时原因不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }
         var reason = $api.trim($api.val($api.byId('gzyy_area')));               //故障原因
+        if (isDeptMalfunction&&common.isEmpty(reason)) {
+            api.toast({
+                msg: '故障原因不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }
         var reasonKey = $("#gzyygjz-sel option:selected").val();                //故障原因关键字
+        if (common.isEmpty(reasonKey)) {
+            api.toast({
+                msg: '故障原因关键字不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }
         var infbus = $("#yxyw-sel option:selected").val();                      //是否影响业务
         var influence =  $api.trim($api.val($api.byId('yxfw_area')));           //业务影响范围
-        var deallast = $api.trim($api.val($api.byId('clls_input')));            //个人处理历时
-        var suspendlast =$api.trim($api.val($api.byId('gqls_input')));           //挂起历时
-        var dmhapptime =$api.trim($api.val($api.byId('gzkqsj_input')));          //故障开始时间
-        var busrecDate=$api.trim($api.val($api.byId('ywhfsj_input')));           //业务恢复时间
-        var dealdate =$api.trim($api.val($api.byId('fdsj_input')));              //返单时间
-        var dm_pro =$("#gzzy-sel option:selected").val();                        //故障专业
-        var dmdeallast = $api.trim($api.val($api.byId('gzls_input')));           //故障历时
-        var routeinfo =$api.trim($api.val($api.byId('lyxx_input')));              //路由信息
-        var rectime ="";                        //派发时间
-        var imgID = "";                         //图片信息
-        var timeout =$api.trim($api.val($api.byId('clsfcs_sel')));               //处理是否超时
-        if(isexclude=="1010902"){//选择“否”不是本部门故障
-            if (common.isEmpty(remark)) {
+        if (isDeptMalfunction&&common.isEmpty(infbus)) {
+            api.toast({
+                msg: '是否影响业务不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }else{
+            if (infbus==='1011001'&&common.isEmpty(influence)) {
                 api.toast({
-                    msg: '处理过程描述不能为空！',
-                    duration: config.duration,
-                    location: 'middle'
-                });
-                return;
-            }else if (common.isEmpty(routeinfo)) {
-                api.toast({
-                    msg: '路由信息不能为空！',
+                    msg: '影响范围不能为空！',
                     duration: config.duration,
                     location: 'middle'
                 });
                 return;
             }
-
-            common.post({
+        }
+        var deallast = $api.trim($api.val($api.byId('clls_input')));            //处理历时
+        if (isDeptMalfunction&&common.isEmpty(deallast)) {
+            api.toast({
+                msg: '处理历时不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }
+        var suspendlast =$api.trim($api.val($api.byId('gqls_input')));           //挂起历时
+        if (isDeptMalfunction&&common.isEmpty(suspendlast)) {
+            api.toast({
+                msg: '挂起历时不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }
+        var dmhapptime =$api.trim($api.val($api.byId('gzkqsj_input')));          //故障开始时间
+        if (isDeptMalfunction&&common.isEmpty(dmhapptime)) {
+            api.toast({
+                msg: '故障开始时间不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }
+        var busrecDate=$api.trim($api.val($api.byId('ywhfsj_input')));           //业务恢复时间
+        if (isDeptMalfunction&&common.isEmpty(busrecDate)) {
+            api.toast({
+                msg: '业务恢复时间不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }
+        var dealdate =$api.trim($api.val($api.byId('fdsj_input')));              //返单时间
+        if (isDeptMalfunction&&common.isEmpty(dealdate)) {
+            api.toast({
+                msg: '返单时间不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }
+        var rectime = $api.trim($api.val($api.byId('pfsj_input')));;                        //派发时间
+        if (isDeptMalfunction&&common.isEmpty(rectime)) {
+            api.toast({
+                msg: '派发时间不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }
+        var dm_pro =$("#gzzy-sel option:selected").val();                        //故障专业
+        if (isDeptMalfunction&&common.isEmpty(dm_pro)) {
+            api.toast({
+                msg: '故障专业不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }
+        var remark = $api.trim($api.val($api.byId('clgcms_area')));             //处理过程描述
+        if (common.isEmpty(remark)) {
+            api.toast({
+                msg: '处理过程描述不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }
+        var dmdeallast = $api.trim($api.val($api.byId('gzls_input')));           //故障历时
+        if (isDeptMalfunction&&common.isEmpty(dmdeallast)) {
+            api.toast({
+                msg: '故障历时不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }
+        var routeinfo =$api.trim($api.val($api.byId('lyxx_input')));              //路由信息
+        if (initialPro==='1010101'&&common.isEmpty(routeinfo)) {
+            api.toast({
+                msg: '路由信息不能为空！',
+                duration: config.duration,
+                location: 'middle'
+            });
+            return;
+        }
+        var imgID = "";                         //图片信息
+        api.confirm({
+            title: '确认返单',
+            msg: '是否提交？',
+            buttons: ['确定', '取消']
+        }, function(retBtn, err) {
+            if(retBtn.buttonIndex===1){
+                common.post({
                     url : config.overWorksheetUrl,
                     isLoading: true,
                     text: "提交中...",
@@ -486,11 +620,7 @@
                             }, function (ret, err) {
                                 api.closeWin();
                             });
-                            //发送操作成功监听
-                            api.sendEvent({
-                                name: 'operate_success',
-
-                            })
+                            common.reloadParentPage()
                         } else {
                             var msg = '返单操作失败！'
                             if (ret&&ret.data&&ret.data.message){
@@ -504,153 +634,8 @@
                         }
                     }
                 });
-        } else{
-            if(common.isEmpty(area)){
-                api.toast({
-                    msg: '故障区域不能为空！',
-                    duration: config.duration,
-                    location: 'middle'
-                });
-                return;
-            } else if (common.isEmpty(reasonKey)) {
-                api.toast({
-                    msg: '故障原因关键字不能为空！',
-                    duration: config.duration,
-                    location: 'middle'
-                });
-                return;
-            }else if (common.isEmpty(infbus)) {
-                api.toast({
-                    msg: '是否影响业务不能为空！',
-                    duration: config.duration,
-                    location: 'middle'
-                });
-                return;
-            }else if (common.isEmpty(deallast)) {
-                api.toast({
-                    msg: '处理历时不能为空！',
-                    duration: config.duration,
-                    location: 'middle'
-                });
-                return;
-            }else if (common.isEmpty(suspendlast)) {
-                api.toast({
-                    msg: '挂起历时不能为空！',
-                    duration: config.duration,
-                    location: 'middle'
-                });
-                return;
-            }else if (common.isEmpty(suspendlast)) {
-                api.toast({
-                    msg: '故障开启时间不能为空！',
-                    duration: config.duration,
-                    location: 'middle'
-                });
-                return;
-            }else if (common.isEmpty(busrecDate)) {
-                api.toast({
-                    msg: '业务恢复时间不能为空！',
-                    duration: config.duration,
-                    location: 'middle'
-                });
-                return;
-            }else if (common.isEmpty(timeout)) {
-                api.toast({
-                    msg: '处理是否超时不能为空！',
-                    duration: config.duration,
-                    location: 'middle'
-                });
-                return;
-            }else if (common.isEmpty(dealdate)) {
-                api.toast({
-                    msg: '返单时间不能为空！',
-                    duration: config.duration,
-                    location: 'middle'
-                });
-                return;
-            }else if (common.isEmpty(suspendlast)) {
-                api.toast({
-                    msg: '派发时间不能为空！',
-                    duration: config.duration,
-                    location: 'middle'
-                });
-                return;
-            }else if (common.isEmpty(dmdeallast)) {
-                api.toast({
-                    msg: '故障历时不能为空！',
-                    duration: config.duration,
-                    location: 'middle'
-                });
-                return;
-            }else if (common.isEmpty(dm_pro)) {
-                api.toast({
-                    msg: '故障专业不能为空！',
-                    duration: config.duration,
-                    location: 'middle'
-                });
-                return;
-            }else if (common.isEmpty(remark)) {
-                api.toast({
-                    msg: '处理过程描述不能为空！',
-                    duration: config.duration,
-                    location: 'middle'
-                });
-                return;
-            }else if (common.isEmpty(routeinfo)) {
-                api.toast({
-                    msg: '路由信息不能为空！',
-                    duration: config.duration,
-                    location: 'middle'
-                });
-                return;
             }
-            // common.post({
-            //
-            //     url : config.overWorksheetUrl + "&wsNum=" + wsNum + "&processId=" + processId
-            //         + "&isexclude=" + isexclude
-            //         + "&area="+ area
-            //         + "&reasonKey=" + reasonKey
-            //         + "&reason=" + reason
-            //         + "&infbus=" + infbus
-            //         + "&influence=" + influence
-            //         + "&deallast=" + deallast
-            //         + "&suspendlast=" + suspendlast
-            //         + "&dmhapptime=" +dmhapptime
-            //         + "&busrecDate=" + busrecDate
-            //         + "&timeout=" + timeout
-            //         + "&timeoutReason=" + timeoutReason
-            //         + "&dealdate=" + dealdate
-            //         + "&dm_pro=" + dm_pro
-            //         + "&remark=" + remark
-            //         + "&imgID=" + imgID
-            //         + "&dmdeallast=" + dmdeallast
-            //         + "&rectime=" +rectime
-            //         + "&routeinfo=" +routeinfo,
-            //     isLoading: true,
-            //     text: "提交中...",
-            //     success: function (ret) {
-            //         if (ret.status==='200'){
-            //             api.alert({
-            //                 title: '提示',
-            //                 msg: '返单操作成功！',
-            //             }, function (ret, err) {
-            //                 api.closeWin();
-            //             });
-            //             common.reloadParentPage();
-            //         } else {
-            //             var msg = '返单操作失败！'
-            //             if (ret&&ret.data&&ret.data.message){
-            //                 msg = ret.data.message
-            //             }
-            //             api.toast({
-            //                 msg:  msg,
-            //                 duration: config.duration,
-            //                 location: 'middle'
-            //             });
-            //         }
-            //     }
-            // });
-        }
+        });
     }
     function picker(id){
         api.openPicker({
@@ -678,6 +663,7 @@
             });
         });
     }
+    //比较业务恢复时间和故障开启时间的差
     function calculateGzls(date) {
         var ywhfTime = new Date(date.replace(/-/g,"/")).getTime();
         var gzksTime = new Date(startTime.replace(/-/g,"/")).getTime();
@@ -855,7 +841,7 @@
         });
     }
     //故障专业
-    function malfunctionSpecialty() {
+    function malfunctionSpecialty(pro) {
         common.post({
             url:config.getAllIdUrl,
             isLoading:false,
@@ -871,7 +857,8 @@
                         var strId  = (data.id).split(",");    //字符分割;
                         var params = {
                             idList:[],
-                            nameList:[]
+                            nameList:[],
+                            pro:pro
                         }
                         params.idList = strId
                         params.nameList = strName
@@ -892,6 +879,14 @@
                 }
             }
         })
+    }
+    
+    function isDeptMalfunction(id) {
+        if (id==='1010902') { //不是本部门故障
+            return false
+        }else{
+            return true
+        }
     }
 </script>
     <script type="text/javascript" src="../../script/malfunction/jquery-3.2.1.js"></script>

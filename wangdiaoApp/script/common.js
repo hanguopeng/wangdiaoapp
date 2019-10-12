@@ -108,14 +108,14 @@ var common = {
             return true
         }
     },
-    'closeAndReload':function () {
+    'closeAndReloadParentPage':function () {
         api.closeWin();
         this.reloadParentPage();
     },
+    // 刷新父级页面，应用于左上角返回及keyback监听
     'reloadParentPage':function () {
         api.sendEvent({
-            name: 'operate_success',
-
+            name: 'reload_this_page',
         })
     }
 

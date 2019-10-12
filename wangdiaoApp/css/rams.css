@@ -180,3 +180,7 @@ textarea::-webkit-input-placeholder {
 .rams-float-right{
     float: right;
 }
+.header_confirm{
+    margin-right: 0.3rem;
+}
+
