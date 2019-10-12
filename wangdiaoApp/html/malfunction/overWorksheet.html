@@ -141,11 +141,11 @@
                     <textarea  placeholder="请输入" id="yxfw_area"></textarea>
                 </div>
             </div>
-            <!--处理历时-->
+            <!--处理总历时-->
             <div class="workSheet_Choose_div" >
                 <div class="workSheet_Choose_div_sp">
                     <span class="redStar" name = "star">*</span>
-                    处理历时：
+                    处理总历时：
                     <div class="inline-block" style="width: 50%;">
                         <input id="clls_input" type="text" value="" tabindex="0" readonly>
                     </div>
@@ -368,7 +368,7 @@
                     var data = ret.data;
                     startTime = data.date2
                     initialPro = data.pro
-                    $api.val($api.byId('clls_input'), data.date1);//处理历时
+                    $api.val($api.byId('clls_input'), data.date1);//处理总历时
                     $api.val($api.byId('gqls_input'), data.date6);//挂起历时
                     $api.val($api.byId('gzkqsj_input'), data.date2);//故障开启时间
                     $api.val($api.byId('ywhfsj_input'), data.date5);//业务恢复时间
@@ -488,10 +488,10 @@
                 return;
             }
         }
-        var deallast = $api.trim($api.val($api.byId('clls_input')));            //处理历时
+        var deallast = $api.trim($api.val($api.byId('clls_input')));            //处理总历时
         if (isDeptMalfunction&&common.isEmpty(deallast)) {
             api.toast({
-                msg: '处理历时不能为空！',
+                msg: '处理总历时不能为空！',
                 duration: config.duration,
                 location: 'middle'
             });
@@ -652,13 +652,17 @@
                 var hh = ret.hour;
                 var hmin = ret.minute;
                 var hDate = hYear + "-" + (hMonth<10? "0"+hMonth:hMonth) + "-" + (hDay<10?"0"+hDay:hDay) + " " +(hh<10?"0"+hh:hh) + ":" + (hmin<10?"0"+hmin:hmin) + ":00";
-                if (new Date(hDate.replace(/-/g,"/")).getTime()<new Date(startTime.replace(/-/g,"/")).getTime()){
-                    alert('业务恢复时间不能小于故障开始时间')
-                    return ;
-                }
-                $api.val($api.byId(id),hDate);
+
                 if (id==='ywhfsj_input'){
-                    calculateGzls(hDate)
+                    if (new Date(hDate.replace(/-/g,"/")).getTime()<new Date(startTime.replace(/-/g,"/")).getTime()){
+                        alert('业务恢复时间不能小于故障开始时间')
+                        return ;
+                    }else{
+                        $api.val($api.byId(id),hDate);
+                        calculateGzls(hDate)
+                    }
+                }else{
+                    $api.val($api.byId(id),hDate);
                 }
             });
         });
@@ -674,7 +678,7 @@
         timeDifference = timeDifference % 3600000;
         var minute = Math.floor(timeDifference / 60000);
         timeDifference = timeDifference % 60000;
-        var second =  Math.floor(timeDifference % 1000);;
+        var second =  Math.floor(timeDifference / 1000);
         var gzls = day+"天"+ hour+"小时"+ minute+"分"+ second + "秒";
         $api.val($api.byId('gzls_input'),gzls);
     }

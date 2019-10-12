@@ -28,9 +28,6 @@
             <span class="aui-Font" onclick="common.closeAndReloadParentPage()">返回</span>
         </div>
         <div class="aui-title">确认结单</div>
-        <div class="aui-pull-right header_confirm">
-            <span class="aui_Font">确定</span>
-        </div>
     </header>
     <div style="margin-top: 3rem">
         <div id="workSheet_area" class="aui-padded-l-15">
@@ -101,11 +98,11 @@
                 </div>
                 <div class="greyLine96"></div>
             </div>
-            <!--接单时间-->
+            <!--派发时间-->
             <div class="workSheet_Choose_div">
                 <div class="workSheet_Choose_div_sp">
                     <span class="redStar">*</span>
-                    接单时间：
+                    派发时间：
                     <div class="inline-block" style="width: 50%;">
                         <input id="jdsj_input" type="text" value="" tabindex="0" readonly placeholder="">
                     </div>
@@ -145,11 +142,11 @@
                 </div>
                 <div class="greyLine96"></div>
             </div>
-            <!--反单时间-->
+            <!--返单时间-->
             <div class="workSheet_Choose_div">
                 <div class="workSheet_Choose_div_sp">
                     <span class="redStar">*</span>
-                    反单时间：
+                    返单时间：
                     <div class="inline-block" style="width: 50%;">
                         <input id="fdsj_input" type="text" value="" tabindex="0" readonly placeholder="">
                     </div>
@@ -290,6 +287,8 @@
     var objectParams;
     var objectName ;
     var initObjectFlag = false;
+    var startTime;  // 故障开启时间
+    var pitchOnProcessId;   //选中的流程id
     apiready = function () {
         initObject();
         api.addEventListener({
@@ -305,22 +304,21 @@
                 var conTmpl = doT.template($api.text($api.byId('confirm_finsh_ws')));
                 $api.html($api.byId('fddx-div'), conTmpl(ret.value));
                 objectName = ret.value.objectName
+                pitchOnProcessId = ret.value.pitchOnProcessId
                 common.post({
                     url: config.accountWorksheetDetail,
                     isLoading:true,
                     data:{
                         wsNum:wsNum,
-                        processId:processId
+                        processId:pitchOnProcessId
                     },
                     success: function (ret) {
                         if (ret && ret.data && ret.data.json1) {
                             var str = JSON.stringify(ret).replace(/\\|\//g, '');
                             str = str.replace('"{', '{');
                             str = str.replace('}"', '}');
-                            console.log(str)
                             json = $api.strToJson(str)
                             json = json.data.json1;
-                            console.log(JSON.stringify(json))
                             //根据字典值判断是否
                             if (json.ISEXCLUDE === '1010901') {
                                 $api.val($api.byId('bbmgz-sel'), '是');
@@ -335,12 +333,13 @@
                             isNotNull("gzls_input",json.DMDEALLAST)
                             isNotNull("gzzy_input",json.DMPRONAME)
                             isNotNull("yxfw_input",json.INFLUENCE)
-
+                            isNotNull("ywhfsj_input",json.DM_RESTART_TIME)
                             isNotNull("fdsj_input",json.DEALDATE)
                             isNotNull("clzls_input",json.DEALLAST)
                             isNotNull("gqls_input",json.SUSPEND_TIME_COUNT)
                             isNotNull("gzkqsj_input",json.DM_START_TIME)
                             isNotNull("clsfcs_sel",json.TIMEOUT)
+                            startTime = json.DM_START_TIME
                             if (json.TIMEOUT === '是') {
                                 $api.removeCls($api.byId('csyy_div'), 'aui-hide');
                             }
@@ -378,9 +377,7 @@
         var reasonKey_name = $api.trim($api.val($api.byId('gzgjz_input')));//故障原因关键字
         var reason1 = $api.trim($api.val($api.byId('gzyy_input')));//故障原因
         var infbus_name = $api.trim($api.val($api.byId('yxyw-sel')));//是否影响业务
-        var rectime = $api.trim($api.val($api.byId('jdsj_input'))); //接单时间
         var dmdeallast = $api.trim($api.val($api.byId('gzls_input')));  //故障历时
-        var dmpro = $api.trim($api.val($api.byId('gzzy_input'))); //故障专业
         var influence1 = $api.trim($api.val($api.byId('yxfw_input'))); //影响范围
         var deallast1 = $api.trim($api.val($api.byId('clzls_input')));  //处理总历时
         var suspendlast1 = $api.trim($api.val($api.byId('gqls_input')));  //挂起历时
@@ -419,7 +416,7 @@
                         isLoading: false,
                         data:{
                             wsNum:wsNum,
-                            processId : processId,
+                            processId : pitchOnProcessId,
                             isexclude_name : '',
                             area_name : area_name,
                             reason1 : reason1,
@@ -504,6 +501,7 @@
             }
         });
     }
+    var frameFlag = false;
     //获取工单详情
     function getWorkSheetDetails() {
             if(initObjectFlag){
@@ -519,13 +517,30 @@
                     pageParam: {objectParams:objectParams
                     },
                 });
+                frameFlag = true;
                 initObjectFlag = false;
             }else{
-                api.toast({
-                    msg: '返单对象加载中，请稍后...',
-                    duration: 2000,
-                    location: 'middle'
-                });
+                if(frameFlag){
+                    api.openFrame({
+                        name: 'objectSelectChangeLine',
+                        url: './objectSelectChangeLine.html',
+                        rect: {
+                            x: 50,
+                            y: 200,
+                            w: 250,
+                            h: 80*objectNum
+                        },
+                        pageParam: {objectParams:objectParams
+                        },
+                    });
+                }else{
+                    api.toast({
+                        msg: '返单对象加载中，请稍后...',
+                        duration: 2000,
+                        location: 'middle'
+                    });
+                }
+
             }
     }
     //退回重新处理
@@ -561,11 +576,34 @@
                 var hh = ret.hour;
                 var hmin = ret.minute;
                 var hDate = hYear + "-" + (hMonth < 10 ? "0" + hMonth : hMonth) + "-" + (hDay < 10 ? "0" + hDay : hDay) + " " + (hh < 10 ? "0" + hh : hh) + ":" + (hmin < 10 ? "0" + hmin : hmin) + ":00";
-
-                $api.val($api.byId(id), hDate);
+                if (id==='ywhfsj_input'){
+                    if (new Date(hDate.replace(/-/g,"/")).getTime()<new Date(startTime.replace(/-/g,"/")).getTime()){
+                        alert('业务恢复时间不能小于故障开始时间')
+                        return ;
+                    }else{
+                        $api.val($api.byId(id),hDate);
+                        calculateGzls(hDate)
+                    }
+                }else{
+                    $api.val($api.byId(id),hDate);
+                }
             });
         });
-
+    }
+    //比较业务恢复时间和故障开启时间的差
+    function calculateGzls(date) {
+        var ywhfTime = new Date(date.replace(/-/g,"/")).getTime();
+        var gzksTime = new Date(startTime.replace(/-/g,"/")).getTime();
+        var timeDifference = ywhfTime-gzksTime;
+        var day = Math.floor(timeDifference / 86400000);
+        timeDifference = timeDifference % 86400000;
+        var hour = Math.floor(timeDifference / 3600000);
+        timeDifference = timeDifference % 3600000;
+        var minute = Math.floor(timeDifference / 60000);
+        timeDifference = timeDifference % 60000;
+        var second =  Math.floor(timeDifference / 1000);
+        var gzls = day+"天"+ hour+"小时"+ minute+"分"+ second + "秒";
+        $api.val($api.byId('gzls_input'),gzls);
     }
 </script>
 </body>

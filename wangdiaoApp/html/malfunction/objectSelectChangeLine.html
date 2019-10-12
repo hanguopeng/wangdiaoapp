@@ -21,7 +21,7 @@
         for(var i=0;i<it.length;i++){
             var item = it[i];
     }}
-    <div id="selectDiv" class="aui-margin-b-10" style="border:1px solid grey" onclick="selectFunc(this)" data-name="{{=item[2]}}" data-time="{{=item[4]}}">
+    <div id="selectDiv" class="aui-margin-b-10" style="border:1px solid grey" onclick="selectFunc(this)" data-name="{{=item[2]}}" data-time="{{=item[4]}}" data-processId="{{=item[5]}}">
     <span>反馈人:{{=item[2]}}</span></br>
     <span>反馈时间:{{=item[4]}}</span>
     </div>
@@ -47,12 +47,13 @@
         }
         var objectName = $api.attr(ele, 'data-name');
         var objectTime = $api.attr(ele, 'data-time');
+        var pitchOnProcessId = $api.attr(ele, 'data-processId');
         setTimeout(function(){
             api.closeFrame({});
         },3*100)
         api.sendEvent({
             name: 'closeSelectFrame',
-            extra: {objectName: objectName, objectTime: objectTime}
+            extra: {objectName: objectName, objectTime: objectTime, pitchOnProcessId:pitchOnProcessId}
         });
     }
 </script>
