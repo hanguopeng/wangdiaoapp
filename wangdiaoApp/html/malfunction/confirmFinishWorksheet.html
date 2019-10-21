@@ -400,7 +400,7 @@
             });
         }else if(busrecDateStr===""||busrecDateStr===null){
             api.toast({
-                msg: '业务恢复时间不可为空',
+                msg: '请选择业务恢复时间',
                 duration: 2000,
                 location: 'middle'
             });
@@ -467,6 +467,7 @@
         }
 
     }
+    var returnProObj ;
     //初始化对象选择下拉选
     function initObject() {
         common.post({
@@ -489,6 +490,8 @@
                         resultArr = objects[i].split(",");
                         (objectParams.objectInfo).push(resultArr);
                     }
+                    var returnProObjArr = objects[objects.length-2].split(",")
+                    returnProObj = returnProObjArr[2]
                     $api.html($api.byId('fddx-sel'), conTmpl(resultArr));
                     initObjectFlag = true;
                 } else {
@@ -518,7 +521,6 @@
                     },
                 });
                 frameFlag = true;
-                initObjectFlag = false;
             }else{
                 if(frameFlag){
                     api.openFrame({
@@ -547,11 +549,19 @@
     function openReturnReprocess(){
         var returnName = $api.attr($api.byId('selectDiv'), 'data-name');
         if(returnName===null||returnName===""||returnName===undefined){
-            api.toast({
-                msg: '请选择返单对象',
-                duration: 2000,
-                location: 'middle'
-            });
+            if(initObjectFlag){
+                api.openWin({
+                    name: 'returnToreProcessing',
+                    url: './returnToreProcessing.html',
+                    pageParam: {objectName: returnProObj}
+                });
+            }else{
+                api.toast({
+                    msg: '处理人获取中...',
+                    duration: 2000,
+                    location: 'middle'
+                });
+            }
         }else{
             api.openWin({
                 name: 'returnToreProcessing',

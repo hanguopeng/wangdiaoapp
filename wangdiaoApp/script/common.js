@@ -114,9 +114,14 @@ var common = {
     },
     // 刷新父级页面，应用于左上角返回及keyback监听
     'reloadParentPage':function () {
+        this.sendEvent('reload_this_page');
+    },
+    // 发送指定名称的事件
+    'sendEvent':function (eventName) {
         api.sendEvent({
-            name: 'reload_this_page',
+            name: eventName,
         })
     }
+
 
 }

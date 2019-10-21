@@ -67,7 +67,7 @@
                     退回原因：
                 </div>
                 <div>
-                    <textarea  placeholder="请输入内容" id="deleteInfo"></textarea>
+                    <textarea  placeholder="请输入" id="deleteInfo"></textarea>
                 </div>
             </div>
         </div>
@@ -143,7 +143,7 @@
         var user = $api.trim($api.val($api.byId('user')))            //重新处理人
         if(common.isEmpty(dispose_way)){
             api.toast({
-                msg: '退回类型不能为空！',
+                msg: '请选择退回类型！',
                 duration: config.duration,
                 location: 'middle'
             });
@@ -174,7 +174,7 @@
                             }, function (ret, err) {
                                 api.closeWin();
                             });
-                            common.reloadParentPage()
+                            common.reloadParentPage();
                         } else {
                             // 因为返回的错误信息是英文，所有没有单独显示错误信息。
                             api.toast({

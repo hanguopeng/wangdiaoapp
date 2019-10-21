@@ -1,5 +1,5 @@
 //var localServer = "http://192.168.1.126:8080/rams_v3"
- var localServer = "http://61.139.150.161:8180/rams_v3"
+var localServer = "http://61.139.150.161:8180/rams_v3"
 var config= {
     duration: 3000,   //提示信息3000毫秒之后消失
     // 测试通过，需要在url后面继续拼接数据的已经在说明后举例！
@@ -51,6 +51,8 @@ var storageKey={
     data_id : "data_id",    //选中节点id
     data_name : "data_name",//选中节点名称
     data_type : "data_type",//选中节点类型
+
+    operate_status : "operate_status",//操作状态  工单操作页面
 
 
 }

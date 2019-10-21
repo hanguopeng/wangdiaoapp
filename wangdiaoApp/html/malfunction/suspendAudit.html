@@ -83,7 +83,7 @@
                 挂起原因：
             </div>
             <div>
-                <textarea id="suspendReason" readonly></textarea>
+                <textarea style="height: 200px" id="suspendReason" readonly></textarea>
             </div>
         </div>
         <!--批复意见-->
@@ -93,7 +93,7 @@
                 批复意见：
             </div>
             <div>
-                <textarea  placeholder="请输入" id="pfyj"></textarea>
+                <textarea style="height: 200px" placeholder="请输入" id="pfyj"></textarea>
             </div>
         </div>
     </div>
@@ -177,7 +177,7 @@
         var processId = $api.getStorage(storageKey.processId);              //流程id
         if(common.isEmpty(dispose_way)){
             api.toast({
-                msg: '挂起类型不能为空！',
+                msg: '请选择挂起类型！',
                 duration: config.duration,
                 location: 'middle'
             });

@@ -171,10 +171,13 @@
         api.addEventListener({
             name: 'reload_this_page'
         },function () {
-            window.location.reload();
+            var operate_status = $api.getStorage(storageKey.operate_status);
+            if (operate_status&&operate_status == "operate_success") {
+                window.location.reload();
+                $api.setStorage(storageKey.operate_status,"");
+            }
         })
     }
-
     //下拉刷新
     function refresh() {
         api.refreshHeaderLoadDone(); //复位下拉刷新
@@ -407,7 +410,6 @@
             slidBackEnabled : false,
             reload:true,
             url: './' + name + '.html',
-            //url: './malfunction/confirmFinishWorksheet.html',
             vScrollBarEnabled:true,
             hScrollBarEnabled:false
         });

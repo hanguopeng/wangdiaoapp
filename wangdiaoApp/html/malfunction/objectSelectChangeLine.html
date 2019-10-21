@@ -10,10 +10,11 @@
     }
 </style>
 </head>
-<body style="background-color: #FFFFFF;">
+<body style="background-color: #FFFFFF;position: absolute">
     <div id="objectSelect" class="aui-margin-l-5 aui-margin-t-10" style="height: 3.4rem;width:100%">
 
     </div>
+    <div class="" style="position: fixed;right: 2.5rem;bottom: 10px;display: block;width:1rem;height:1rem"><input type="button" class="aui-btn" onclick="closeFrame()" value="取消"></div>
 </body>
 <script id="confirm_finsh_ws" type="text/template">
 
@@ -21,7 +22,7 @@
         for(var i=0;i<it.length;i++){
             var item = it[i];
     }}
-    <div id="selectDiv" class="aui-margin-b-10" style="border:1px solid grey" onclick="selectFunc(this)" data-name="{{=item[2]}}" data-time="{{=item[4]}}" data-processId="{{=item[5]}}">
+    <div id="selectDiv" style="margin-bottom: 1rem;" style="border:1px solid grey" onclick="selectFunc(this)" data-name="{{=item[2]}}" data-time="{{=item[4]}}" data-processId="{{=item[5]}}">
     <span>反馈人:{{=item[2]}}</span></br>
     <span>反馈时间:{{=item[4]}}</span>
     </div>
@@ -37,7 +38,9 @@
         var conTmpl = doT.template($api.text($api.byId('confirm_finsh_ws')))
         $api.html($api.byId('objectSelect'),conTmpl(param.objectParams.objectInfo));
     }
-
+    function closeFrame(){
+        api.closeFrame();
+    }
     function selectFunc(ele){
         var clsFlag = $api.hasCls(ele);
         if(clsFlag){
