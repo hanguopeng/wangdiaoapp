@@ -230,9 +230,11 @@
                 j_password: personInfo.password
             },
             success:function(ret){
+                versionInfo = versionInfo.substring(2)
                 if(ret){
                     if(ret.status=== "200"){
-                        if(versionInfo < ret.data.code){
+                        var appCode = ret.data.code.substring(2)
+                        if(parseInt(versionInfo)< parseInt(appCode)){
                             api.confirm({
                                 title:'有新版本！是否更新？',
                                 msg:'',
