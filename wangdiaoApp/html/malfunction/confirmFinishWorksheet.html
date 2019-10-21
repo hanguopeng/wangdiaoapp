@@ -25,7 +25,7 @@
     <header class="aui-bar aui-bar-nav headerMarginTop" style="position: fixed;">
         <div class="aui-pull-left aui-btn">
             <span class="aui-iconfont aui-icon-left"></span>
-            <span class="aui-Font" onclick="common.closeAndReloadParentPage()">返回</span>
+            <span class="aui-Font" onclick="api.closeWin()">返回</span>
         </div>
         <div class="aui-title">确认结单</div>
     </header>
@@ -292,11 +292,6 @@
     apiready = function () {
         initObject();
         api.addEventListener({
-            name: 'keyback'
-        }, function () {
-            common.closeAndReloadParentPage()
-        })
-        api.addEventListener({
             name:'closeSelectFrame'
         },function(ret,err){
             if(ret&&ret.value){
@@ -446,9 +441,8 @@
                                     title: '提示',
                                     msg: '确认结单操作成功！',
                                 }, function (ret, err) {
-                                    api.closeWin();
+                                    common.closeAndReloadAppointPage('process_success_reload_worksheet_detail');
                                 });
-                                common.reloadParentPage();
                             }else{
                                 var msg = '确认结单操作失败！'
                                 if (ret&&ret.data&&ret.data.message){

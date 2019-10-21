@@ -169,10 +169,10 @@
         keyBackListener()
         //监听keyback返回事件
         api.addEventListener({
-            name: 'reload_this_page'
+            name: 'reload_worksheet_manage'
         },function () {
             var operate_status = $api.getStorage(storageKey.operate_status);
-            if (operate_status&&operate_status == "operate_success") {
+            if (operate_status&&operate_status === "operate_success") {
                 window.location.reload();
                 $api.setStorage(storageKey.operate_status,"");
             }

@@ -89,12 +89,6 @@
         initSelect();
         var params = api.pageParam
             $api.val($api.byId('user'), params.objectName);
-
-        api.addEventListener({
-            name: 'keyback'
-        }, function () {
-            common.closeAndReloadParentPage()
-        })
     }
     function initSelect(){
         common.post({
@@ -172,9 +166,8 @@
                                 title: '提示',
                                 msg: '退回重新处理操作成功！',
                             }, function (ret, err) {
-                                api.closeWin();
+                                common.closeAndReloadAppointPage('process_success_reload_worksheet_detail');
                             });
-                            common.reloadParentPage();
                         } else {
                             // 因为返回的错误信息是英文，所有没有单独显示错误信息。
                             api.toast({

@@ -24,7 +24,7 @@
 <div class="bodyContainer bodyPosition">
     <header class="aui-bar aui-bar-nav headerMarginTop" style="position: fixed;">
         <div class="aui-pull-left aui-btn">
-            <span class="aui-iconfont aui-icon-left"></span><span class="aui-Font" onclick="common.closeAndReloadParentPage()">返回</span>
+            <span class="aui-iconfont aui-icon-left"></span><span class="aui-Font" onclick="api.closeWin()">返回</span>
         </div>
         <div class="aui-title">返单</div>
         <div class="aui-pull-right header_confirm">
@@ -345,12 +345,6 @@
     var initialPro;
     apiready = function() {
         initSelect();
-        //监听操作完成事件 刷新流程菜单
-        api.addEventListener({
-            name: 'keyback'
-        }, function () {
-            common.closeAndReloadParentPage()
-        })
     }
     //动态加载select
     function initSelect(){
@@ -618,9 +612,8 @@
                                 title: '提示',
                                 msg: '返单操作成功！',
                             }, function (ret, err) {
-                                api.closeWin();
+                                common.closeAndReloadAppointPage('process_success_reload_worksheet_detail');
                             });
-                            common.reloadParentPage();
                         } else {
                             var msg = '返单操作失败！'
                             if (ret&&ret.data&&ret.data.message){

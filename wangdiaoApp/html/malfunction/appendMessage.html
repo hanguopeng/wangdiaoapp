@@ -49,11 +49,6 @@
 
 <script>
     apiready = function () {
-        api.addEventListener({
-            name: 'keyback'
-        }, function () {
-            api.closeWin();
-        })
     }
     function save() {
         var remark = $api.trim($api.val($api.byId('appendMessage')));       //追加内容
@@ -90,9 +85,8 @@
                                 title: '提示',
                                 msg: '信息追加操作成功！',
                             }, function (ret, err) {
-                                api.closeWin();
+                                common.closeAndReloadAppointPage('process_success_reload_worksheet_detail');
                             });
-                            common.reloadParentPage();
                         } else {
                             // 因为返回的错误信息是英文，所有没有单独显示错误信息。
                             api.toast({

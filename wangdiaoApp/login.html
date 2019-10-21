@@ -179,6 +179,8 @@
             },
             success: function (ret) {
                 if (ret.status==='200'){
+                    // 清空manage页刷新判断依据
+                    $api.setStorage(storageKey.operate_status,'');
                     $api.setStorage(storageKey.loginUser,ret.data);
                     if (remMe){
                         $api.setStorage(storageKey.loginName,userName);
